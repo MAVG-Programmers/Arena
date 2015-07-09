@@ -4,6 +4,7 @@ var audio = {
 
 audio.init = function() {
     try {
+        //Only one gain is used for now; we might want to use two or more if we end up using multiple channels (e.g. for BGM and SFX)
         audio.context = new (window.AudioContext || window.webkitAudioContext)();
         audio.masterGain = audio.context.createGain();
         audio.masterGain.connect(audio.context.destination);
@@ -22,6 +23,8 @@ audio.load = function(url, data, cb) {
     request.open("GET", url, true);
     request.responseType = "arraybuffer";
 
+    //Argument handling so that both audio.load(url, data, cb) and audio.load(url, cb) work
+    //Traditionally the callback is the last argument, but data is optional and using an object of options seems unnecessarily heavy
     if(!cb) {
         cb = data;
         data = undefined;
@@ -107,6 +110,8 @@ function SoundBank(files) {
     this.gainNode = audio.context.createGain();
 
     function receiveReady() {
+        //Every time receiveReady is called, it increments the count of received files and checks to see if it matches the total number expected
+        //Once it does, then all the files have been received and the ready queue for the SoundBank can be executed
         if(++_this.readyCount === files.length) {
             _this.ready = true;
 
@@ -116,6 +121,7 @@ function SoundBank(files) {
         }
     }
 
+    //This creates a new Sound for all the elements of the SoundBank and attaches receiveReady to each of them
     for(var i = 0; i < files.length; i++) {
         _this.bank.push(new Sound(files[i]));
         _this.bank[i].onReady(receiveReady);
@@ -125,6 +131,7 @@ function SoundBank(files) {
 SoundBank.prototype.playNext = function() {
     if(!audio.ready) { return; }
     
+    //This just increments the index and wraps it around the number of sounds in the bank
     this.last = (this.last + 1) % this.bank.length;
     this.bank[this.last].play();
 };
