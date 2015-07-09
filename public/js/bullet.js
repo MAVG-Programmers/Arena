@@ -18,8 +18,6 @@ function Bullet()
 		this.x = from.x;
 		this.y = from.y;
 
-		console.log(from, to);
-
 		var angle = Math.atan2(to.y-from.y, to.x-from.x);
 		this.speed = {x: Math.cos(angle)*Bullet.speed, y: Math.sin(angle)*Bullet.speed};
 
