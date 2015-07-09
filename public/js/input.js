@@ -1,5 +1,6 @@
 var keystroke_objs = [],
     heldkeys = {},
+    mouse = {};
     KEYS = {
         RIGHT: 39,
         LEFT: 37,
@@ -68,3 +69,24 @@ $(function() {
         heldkeys[e.which] = false;
     });
 })
+
+function getMousePos(canvas, e) 
+{
+    var temp = {};
+
+    if(e.offsetX) {
+        temp.x = e.offsetX;
+        temp.y = e.offsetY;
+    }
+    else if(e.layerX) {
+        temp.x = e.layerX;
+        temp.y = e.layerY;
+    }
+
+    return temp;
+}
+
+addEventListener("mousemove", function(e) 
+{
+    mouse = getMousePos(game.canvas, e);
+}, false);
