@@ -38,7 +38,16 @@ game.init = function() {
 };
 
 game.mainLoop = function() {
+
+
     game.ctx.clearRect(0, 0, game.width, game.height);
+
+
+    // collision debug
+    console.log('collision test: ' + debugCollisionManager.AABB({x: player.x, y: player.y, width: player.sprite.width, height: player.sprite.height}, debugRect))
+    game.ctx.fillRect(debugRect.x, debugRect.y, debugRect.width, debugRect.height);
+    // ---
+    
     player.sprite.draw(player.x, player.y);
 
     if(heldkeys[KEYS.RIGHT]) {
