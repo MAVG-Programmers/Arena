@@ -1,15 +1,5 @@
 console.log('collision init')
 
-var debugRect = 
-{
-	x: 		300, 
-	y: 		250, 
-	width: 	100,
-	height:  50,
-}
-
-var debugCollisionManager = new CollisionManager();
-
 function CollisionManager()
 {
 	this.AABB = function(a, b) // a and b are objects with the following properties required : x, y, width, height
@@ -34,4 +24,23 @@ function CollisionManager()
 			return false; // Objects are not colliding
 		}
 	}
+
+	this.isInsideBounds = function(a) // a is an object with the following properties required : x, y, width, height
+	{
+		var inside = {x: true, y: true};
+
+		if (a.x < 0 || a.x + a.width > game.width)
+		{
+			inside.x = false;
+		}
+
+		if (a.y < 0 || a.y + a.height > game.height)
+		{
+			inside.y = false;
+		}
+
+		return inside;
+	}
 }
+
+var collisionManager = new CollisionManager();

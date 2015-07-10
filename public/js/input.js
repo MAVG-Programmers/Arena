@@ -5,7 +5,8 @@ var keystroke_objs = [],
         RIGHT: 39,
         LEFT: 37,
         UP: 38,
-        DOWN: 40
+        DOWN: 40,
+        SPACE: 32,
     };
 
 //This can be used to register a keystroke with a number of options for controlling its behavior.

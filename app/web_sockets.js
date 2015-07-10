@@ -1,18 +1,32 @@
 var crypto = require("crypto"),
-    
     players = [];
+    GAME = 
+    {
+        PLAYER:
+        {
+            SPEED: 5
+        },
+        BULLET:
+        {
+            SPEED: 15,
+        },
+        GRAVITY:      1,
+    }
+
+
 
 function Player() {
     var id;
 
     this.x = Math.random()*500;
     this.y = Math.random()*500;
+    this.inAir = true;
+    this.speed = {x: 0, y: 0};
 
     this.updatePosition = function(angle)
     {
-        console.log(angle);
-        this.x += Math.cos(angle)*Player.speed;
-        this.y += Math.sin(angle)*Player.speed;
+        this.x += Math.cos(angle)*GAME.PLAYER.SPEED;
+        this.y += Math.sin(angle)*GAME.PLAYER.SPEED;
     }
 
     //Each player is assigned a 32-character (hex is 2 characters per bit) random ID
@@ -28,8 +42,6 @@ function Player() {
 
     players.push(this);
 }
-
-Player.speed = 1;
 
 //This is a simple search function that can be used to iterate through all the players and check a given key for a given value
 Player.find = function(key, val) {
@@ -48,12 +60,13 @@ function initialize(io) {
 
         socket.on("join", function() {
 
-            socket.emit("other players", players);
-
             var player = new Player();
             socket.player = player;
 
-            socket.emit("player update", player);
+            socket.emit("game options", GAME);
+            socket.emit("all players", players);
+
+            socket.emit("yourself update", player);
             socket.broadcast.emit("player joined", player);
 
             console.log('new player joined.')
@@ -62,7 +75,7 @@ function initialize(io) {
         socket.on('move', function(angle)
         {
             socket.player.updatePosition(angle);
-            socket.broadcast.emit('player moved', socket.player);
+            io.sockets.emit('player moved', socket.player);
         });
 
         socket.on('disconnect', function()
@@ -70,8 +83,8 @@ function initialize(io) {
             if (players.indexOf(socket.player) > -1)
             {
                 players.splice(players.indexOf(socket.player), 1);
-                delete socket.player;
                 console.log('player dc: ' + socket.player.id);
+                delete socket.player;
             }
         });
     });

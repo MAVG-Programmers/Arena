@@ -1,13 +1,17 @@
-console.log('Player init')
+console.log('player init')
 
 
 function Player()
 {
 	this.spawn = function (player) // from and to are position objects with the following properties required: x, y
 	{
-		this.x = player.x;
-		this.y = player.y;
-		this.id = player.id;
+		for (var key in player)
+		{
+			this[key] = player[key];
+		}
+
+		this.width = Player.width;
+		this.height = Player.height;
 
 		Player.players[player.id] = this;
 	};
@@ -20,13 +24,10 @@ function Player()
 
 	this.draw = function (ctx)
 	{
-		ctx.fillStyle = 'green'
-		ctx.beginPath();
-		ctx.arc(this.x, this.y, 7, 0, Math.PI * 2, false);
-		ctx.fill();
-		ctx.closePath();
+		Player.sprite.draw(this.x, this.y);
 	};
 }
+
 Player.players = {};
 
 Player.drawPlayers = function()
@@ -37,3 +38,11 @@ Player.drawPlayers = function()
 		player.draw(game.ctx);
 	}
 }
+
+Player.width = 32,
+Player.height = 32,
+Player.sprite = new Sprite({
+        width: Player.width,
+        height: Player.height,
+        path: "img/player.png"
+    });

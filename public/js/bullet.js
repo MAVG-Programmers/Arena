@@ -1,12 +1,11 @@
 console.log('bullet init')
-console.log(Bullet);
 
 // bullet debugging
 
 addEventListener("mousedown", function()
 	{
 		var bullet = new Bullet();
-		bullet.fire(player, mouse);
+		bullet.fire(Player.players[yourself.id], mouse);
 	}, false);
 
 // ---
@@ -19,15 +18,15 @@ function Bullet()
 		this.y = from.y;
 
 		var angle = Math.atan2(to.y-from.y, to.x-from.x);
-		this.speed = {x: Math.cos(angle)*Bullet.speed, y: Math.sin(angle)*Bullet.speed};
+		this.direction = {x: Math.cos(angle), y: Math.sin(angle)};
 
 		Bullet.bullets.push(this);
 	};
 
 	this.update = function ()
 	{
-		this.x += this.speed.x;
-		this.y += this.speed.y;
+		this.x += this.direction.x*GAME.BULLET.SPEED;
+		this.y += this.direction.y*GAME.BULLET.SPEED;
 	}
 
 	this.draw = function (ctx)
@@ -39,7 +38,6 @@ function Bullet()
 		ctx.closePath();
 	};
 }
-Bullet.speed = 1;
 Bullet.bullets = [];
 
 Bullet.updateBullets = function()
