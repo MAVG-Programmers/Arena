@@ -1,33 +1,25 @@
 var crypto = require("crypto"),
     players = [];
-    GAME = 
-    {
-        PLAYER:
-        {
+    GAME = {
+        PLAYER: {
             SPEED: 5
         },
-        BULLET:
-        {
+        BULLET: {
             SPEED: 15,
         },
-        GRAVITY:      1,
-    }
-
-
+        GRAVITY: 1
+    };
 
 function Player() {
     var id;
 
-    this.x = Math.random()*500;
-    this.y = Math.random()*500;
+    this.x = Math.random() * 500;
+    this.y = Math.random() * 500;
     this.inAir = true;
-    this.speed = {x: 0, y: 0};
-
-    this.updatePosition = function(angle)
-    {
-        this.x += Math.cos(angle)*GAME.PLAYER.SPEED;
-        this.y += Math.sin(angle)*GAME.PLAYER.SPEED;
-    }
+    this.speed = {
+        x: 0,
+        y: 0
+    };
 
     //Each player is assigned a 32-character (hex is 2 characters per bit) random ID
     //If there's a collision (effectively impossible, but still technically possible), the ID is regenerated until unique
@@ -54,12 +46,16 @@ Player.find = function(key, val) {
     return false;
 };
 
+Player.prototype.updatePosition = function(angle) {
+    this.x += Math.cos(angle) * GAME.PLAYER.SPEED;
+    this.y += Math.sin(angle) * GAME.PLAYER.SPEED;
+};
+
 function initialize(io) {
     io.on("connection", function(socket) {
         console.log(socket.handshake.address + " connected.");
 
         socket.on("join", function() {
-
             var player = new Player();
             socket.player = player;
 
@@ -69,21 +65,18 @@ function initialize(io) {
             socket.emit("yourself update", player);
             socket.broadcast.emit("player joined", player);
 
-            console.log('new player joined.')
+            console.log("New player joined.")
         });
 
-        socket.on('move', function(angle)
-        {
+        socket.on("move", function(angle) {
             socket.player.updatePosition(angle);
-            io.sockets.emit('player moved', socket.player);
+            io.sockets.emit("player moved", socket.player);
         });
 
-        socket.on('disconnect', function()
-        {
-            if (players.indexOf(socket.player) > -1)
-            {
+        socket.on("disconnect", function() {
+            if(players.indexOf(socket.player) > -1) {
                 players.splice(players.indexOf(socket.player), 1);
-                console.log('player dc: ' + socket.player.id);
+                console.log("Player disconnected: " + socket.player.id);
                 delete socket.player;
             }
         });

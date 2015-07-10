@@ -71,23 +71,20 @@ $(function() {
     });
 })
 
-function getMousePos(canvas, e) 
-{
-    var temp = {};
+function getMousePos(canvas, e) {
+    var res = {};
 
     if(e.offsetX) {
-        temp.x = e.offsetX;
-        temp.y = e.offsetY;
-    }
-    else if(e.layerX) {
-        temp.x = e.layerX;
-        temp.y = e.layerY;
+        res.x = e.offsetX;
+        res.y = e.offsetY;
+    } else if(e.layerX) {
+        res.x = e.layerX;
+        res.y = e.layerY;
     }
 
-    return temp;
+    return res;
 }
 
-addEventListener("mousemove", function(e) 
-{
+addEventListener("mousemove", function(e) {
     mouse = getMousePos(game.canvas, e);
 }, false);
