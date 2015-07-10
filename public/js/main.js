@@ -32,68 +32,75 @@ game.init = function() {
 };
 
 game.mainLoop = function() {
-    var move = {
-        x: 0,
-        y: 0
-    };
 
     game.ctx.clearRect(0, 0, game.width, game.height);
 
+    var move = 0;
+
     if(heldkeys[KEYS.RIGHT]) {
-        move.x = GAME.PLAYER.SPEED;
+        move = 1
     }
 
     if(heldkeys[KEYS.LEFT]) {
-        move.x = -GAME.PLAYER.SPEED;
+        move = -1;
     }
 
-    if(heldkeys[KEYS.DOWN]) {
-        move.y = GAME.PLAYER.SPEED;
+    Player.players[yourself.id].speed.x = move*GAME.PLAYER.SPEED;
+
+    if (Player.players[yourself.id].inAir){
+        Player.players[yourself.id].speed.y += GAME.GRAVITY;
     }
 
-    if(heldkeys[KEYS.UP]) {
-        move.y = -GAME.PLAYER.SPEED;
+    // Temporary player object with applied x movement
+    var temp_x = {
+        x: Player.players[yourself.id].x + Player.players[yourself.id].speed.x,
+        y: Player.players[yourself.id].y,
+        width: Player.players[yourself.id].width,
+        height: Player.players[yourself.id].height,
+    };
+
+    // Temporary player object with applied y movement
+    var temp_y = {
+        x: Player.players[yourself.id].x,
+        y: Player.players[yourself.id].y + Player.players[yourself.id].speed.y,
+        width: Player.players[yourself.id].width,
+        height: Player.players[yourself.id].height,
+    };
+
+    // If colliding in the x direction
+    if(Platform.isObjectCollidingWithAPlatform(temp_x) || !collisionManager.isInsideBounds(temp_x).x) {
+        move = 0;
+        Player.players[yourself.id].speed.x = 0;
     }
 
-    // If the player is trying to move himself
-    if(move.x != 0 || move.y != 0) {
-        // Temporary player object with applied x movement
-        var temp_x = {
-            x: Player.players[yourself.id].x + move.x,
-            y: Player.players[yourself.id].y,
-            width: Player.players[yourself.id].width,
-            height: Player.players[yourself.id].height,
-        };
-
-        // Temporary player object with applied y movement
-        var temp_y = {
-            x: Player.players[yourself.id].x,
-            y: Player.players[yourself.id].y + move.y,
-            width: Player.players[yourself.id].width,
-            height: Player.players[yourself.id].height,
-        };
-
-        // Testing if applied x-movement is legal
-        if(Platform.isObjectCollidingWithAPlatform(temp_x) || !collisionManager.isInsideBounds(temp_x).x) {
-            move.x = 0;
-        }
-
-        // Testing if applied y-movement is legal
-        if(Platform.isObjectCollidingWithAPlatform(temp_y) || !collisionManager.isInsideBounds(temp_y).y) {
-            move.y = 0;
-        }
-
-        // If the movement was accepted in any direction, do move
-        if(move.x != 0 || move.y != 0) {
-            var your_player = Player.players[yourself.id];
-            your_player.x += move.x;
-            your_player.y += move.y;
-            var angle = Math.atan2(move.y, move.x);
-
-            // Transmits movement angle to server
-            socket.emit("move", angle); 
-        }
+    // If colliding in the y direction and being in air
+    if((Platform.isObjectCollidingWithAPlatform(temp_y) || !collisionManager.isInsideBounds(temp_y).y) && Player.players[yourself.id].inAir) {
+        Player.players[yourself.id].inAir = false;
+        Player.players[yourself.id].speed.y = 0;
+        socket.emit('on ground');
     }
+
+    // Else if the player has left the platform he was standing on
+    else if (!Platform.isObjectCollidingWithAPlatform({x: temp_y.x, y: temp_y.y+10, width: temp_y.width, height: temp_y.height}) && !Player.players[yourself.id].inAir)
+    {
+        Player.players[yourself.id].inAir = true;
+        socket.emit('in air')
+    }
+
+    // If the player is on the ground and pressing the jump button
+    if (!Player.players[yourself.id].inAir && heldkeys[KEYS.SPACE])
+    {
+        Player.players[yourself.id].inAir = true;
+        Player.players[yourself.id].speed.y = GAME.PLAYER.JUMP;
+        socket.emit('jump')
+    }
+
+    // Transmitting x-direction movement to the server
+    socket.emit('move', move);
+
+    // Doing a local prediction update which will be overridden by the server later
+    Player.players[yourself.id].x += Player.players[yourself.id].speed.x;
+    Player.players[yourself.id].y += Player.players[yourself.id].speed.y;
 
     Bullet.updateBullets();
 

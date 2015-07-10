@@ -2,12 +2,13 @@ var crypto = require("crypto"),
     players = [];
     GAME = {
         PLAYER: {
-            SPEED: 5
+            SPEED: 5,
+            JUMP: -10,
         },
         BULLET: {
             SPEED: 15,
         },
-        GRAVITY: 1
+        GRAVITY: 0.4
     };
 
 function Player() {
@@ -46,12 +47,27 @@ Player.find = function(key, val) {
     return false;
 };
 
-Player.prototype.updatePosition = function(angle) {
-    this.x += Math.cos(angle) * GAME.PLAYER.SPEED;
-    this.y += Math.sin(angle) * GAME.PLAYER.SPEED;
+Player.updatePlayers = function()
+{
+    for (var i = 0; i < players.length; i ++)
+    {
+        players[i].update();
+    }
+}
+
+Player.prototype.update = function() {
+    this.x += this.speed.x * GAME.PLAYER.SPEED;
+
+    if (this.inAir){
+        this.speed.y += GAME.GRAVITY;
+        this.y += this.speed.y;
+    }
+
+    io.transmitPosition(this);
 };
 
-function initialize(io) {
+function initialize(io_obj) {
+    io = io_obj;
     io.on("connection", function(socket) {
         console.log(socket.handshake.address + " connected.");
 
@@ -68,9 +84,34 @@ function initialize(io) {
             console.log("New player joined.")
         });
 
-        socket.on("move", function(angle) {
-            socket.player.updatePosition(angle);
-            io.sockets.emit("player moved", socket.player);
+        socket.on("move", function(move) {
+            try{
+            socket.player.speed.x = move;
+            }
+            catch(e){}
+        });
+
+        socket.on("on ground", function() {
+            try{
+            socket.player.speed.y = 0;
+            socket.player.inAir = false;
+            }
+            catch(e){}
+        });
+
+        socket.on("in air", function() {
+            try{
+            socket.player.inAir = true;
+            }
+            catch(e){}
+        });
+
+        socket.on("jump", function() {
+            try{
+            socket.player.speed.y = GAME.PLAYER.JUMP;
+            socket.player.inAir = true;
+            }
+            catch(e){}
         });
 
         socket.on("disconnect", function() {
@@ -82,7 +123,17 @@ function initialize(io) {
         });
     });
 
+    io.transmitPosition = function(player)
+    {
+        io.sockets.emit('player update', player);
+    }
+
     console.log("Socket.IO ready.");
 }
+
+setInterval(function()
+{
+    Player.updatePlayers();
+}, 20)
 
 module.exports = initialize;

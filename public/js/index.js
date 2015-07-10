@@ -65,6 +65,6 @@ socket.on("player disconnect", function(player) {
     delete Player.players[player.id];
 });
 
-socket.on("player moved", function(player) {
+socket.on("player update", function(player) {
     Player.players[player.id].update(player);
 });
