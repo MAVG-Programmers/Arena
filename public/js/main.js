@@ -1,6 +1,6 @@
 console.log("Main initialized.");
 
-var GAME = {}, //Sent by server
+var CONSTANTS = {}, //Sent by server
     game = {
         requestAnimationFrame:
             window.requestAnimationFrame ||
@@ -45,10 +45,10 @@ game.mainLoop = function() {
         move = -1;
     }
 
-    Player.players[yourself.id].speed.x = move*GAME.PLAYER.SPEED;
+    Player.players[yourself.id].speed.x = move*CONSTANTS.PLAYER.SPEED;
 
     if (Player.players[yourself.id].inAir){
-        Player.players[yourself.id].speed.y += GAME.GRAVITY;
+        Player.players[yourself.id].speed.y += CONSTANTS.GRAVITY;
     }
 
     // Temporary player object with applied x movement
@@ -91,7 +91,7 @@ game.mainLoop = function() {
     if (!Player.players[yourself.id].inAir && heldkeys[KEYS.SPACE])
     {
         Player.players[yourself.id].inAir = true;
-        Player.players[yourself.id].speed.y = GAME.PLAYER.JUMP;
+        Player.players[yourself.id].speed.y = CONSTANTS.PLAYER.JUMP;
         socket.emit('jump')
     }
 

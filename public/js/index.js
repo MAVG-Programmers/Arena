@@ -35,9 +35,9 @@ socket.on("yourself update", function(you) {
     receiveConfiguration("yourself");
 });
 
-socket.on("game options", function(obj) {
-    console.log("received game options", obj);
-    GAME = obj;
+socket.on("constants", function(obj) {
+    console.log("received constants", obj);
+    CONSTANTS = obj;
 
     receiveConfiguration("game_options");
 });

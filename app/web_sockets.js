@@ -1,6 +1,6 @@
 var crypto = require("crypto"),
     players = [];
-    GAME = {
+    CONSTANTS = {
         PLAYER: {
             SPEED: 5,
             JUMP: -10,
@@ -56,10 +56,10 @@ Player.updatePlayers = function()
 }
 
 Player.prototype.update = function() {
-    this.x += this.speed.x * GAME.PLAYER.SPEED;
+    this.x += this.speed.x * CONSTANTS.PLAYER.SPEED;
 
     if (this.inAir){
-        this.speed.y += GAME.GRAVITY;
+        this.speed.y += CONSTANTS.GRAVITY;
         this.y += this.speed.y;
     }
 
@@ -75,7 +75,7 @@ function initialize(io_obj) {
             var player = new Player();
             socket.player = player;
 
-            socket.emit("game options", GAME);
+            socket.emit("constants", CONSTANTS);
             socket.emit("all players", players);
 
             socket.emit("yourself update", player);
@@ -108,7 +108,7 @@ function initialize(io_obj) {
 
         socket.on("jump", function() {
             try{
-            socket.player.speed.y = GAME.PLAYER.JUMP;
+            socket.player.speed.y = CONSTANTS.PLAYER.JUMP;
             socket.player.inAir = true;
             }
             catch(e){}
