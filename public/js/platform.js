@@ -21,7 +21,7 @@ Platform.prototype.update = function(platform) {
     this.x = platform.x;
     this.y = platform.y;
     this.angle = platform.angle;
-}
+};
 
 Platform.prototype.draw = function(ctx) {
     ctx.fillStyle = "black";
@@ -29,12 +29,12 @@ Platform.prototype.draw = function(ctx) {
 };
 
 Platform.drawPlatforms = function() {
-    for (var i = 0; i < Platform.platforms.length; i++)
-    {
+    for(var i = 0; i < Platform.platforms.length; i++) {
         var platform = Platform.platforms[i];
         platform.draw(game.ctx);
     }
-}
+};
+
 Platform.isObjectCollidingWithAPlatform = function(object) {
     var colliding = false;
 
@@ -49,7 +49,7 @@ Platform.isObjectCollidingWithAPlatform = function(object) {
     }
 
     return colliding;
-}
+};
 
 //Debug platforms
 var p1 = new Platform();

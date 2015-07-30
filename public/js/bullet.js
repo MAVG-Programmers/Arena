@@ -33,7 +33,7 @@ Bullet.prototype.fire = function(from, to) {
 Bullet.prototype.update = function() {
     this.x += this.direction.x * CONSTANTS.BULLET.SPEED;
     this.y += this.direction.y * CONSTANTS.BULLET.SPEED;
-}
+};
 
 Bullet.prototype.draw = function(ctx) {
     ctx.fillStyle = "blue";

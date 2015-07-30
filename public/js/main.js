@@ -47,7 +47,7 @@ game.mainLoop = function() {
 
     Player.players[yourself.id].speed.x = move*CONSTANTS.PLAYER.SPEED;
 
-    if (Player.players[yourself.id].inAir){
+    if(Player.players[yourself.id].inAir){
         Player.players[yourself.id].speed.y += CONSTANTS.GRAVITY;
     }
 
@@ -81,15 +81,21 @@ game.mainLoop = function() {
     }
 
     // Else if the player has left the platform he was standing on
-    else if (!Platform.isObjectCollidingWithAPlatform({x: temp_y.x, y: temp_y.y+10, width: temp_y.width, height: temp_y.height}) && !Player.players[yourself.id].inAir)
-    {
+    else if(
+        !Platform.isObjectCollidingWithAPlatform({
+            x: temp_y.x,
+            y: temp_y.y+10,
+            width: temp_y.width,
+            height: temp_y.height
+        }) &&
+        !Player.players[yourself.id].inAir
+    ) {
         Player.players[yourself.id].inAir = true;
         socket.emit('in air')
     }
 
     // If the player is on the ground and pressing the jump button
-    if (!Player.players[yourself.id].inAir && heldkeys[KEYS.SPACE])
-    {
+    if(!Player.players[yourself.id].inAir && heldkeys[KEYS.SPACE]) {
         Player.players[yourself.id].inAir = true;
         Player.players[yourself.id].speed.y = CONSTANTS.PLAYER.JUMP;
         socket.emit('jump')
