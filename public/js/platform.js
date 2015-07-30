@@ -1,7 +1,9 @@
 console.log("platform init");
 
-function Platform() {
-
+function Platform(options) {
+    if(options) {
+        this.spawn(options);
+    }
 }
 
 Platform.platforms = [];
@@ -52,24 +54,21 @@ Platform.isObjectCollidingWithAPlatform = function(object) {
 };
 
 //Debug platforms
-var p1 = new Platform();
-p1.spawn({
+new Platform({
     x: 40,
     y: 60,
     width: 300,
     height: 20
 });
 
-var p2 = new Platform();
-p2.spawn({
+new Platform({
     x: 60,
     y: 300,
     width: 100,
     height: 20
 });
 
-var p3 = new Platform();
-p3.spawn({
+new Platform({
     x: 500,
     y: 250,
     width: 300,
