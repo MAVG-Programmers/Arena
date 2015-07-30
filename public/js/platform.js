@@ -6,10 +6,15 @@ function Platform(options) {
     }
 }
 
+Platform.WIDTH = 32;
+Platform.HEIGHT = 32;
 Platform.platforms = [];
 
 //from and to are objects with the following properties required: x, y
 Platform.prototype.spawn = function(platform) {
+    platform.x += game.PADDING;
+    platform.y += game.PADDING;
+
     this.x = platform.x;
     this.y = platform.y;
     this.width = platform.width;
@@ -38,10 +43,11 @@ Platform.drawPlatforms = function() {
 };
 
 Platform.isObjectCollidingWithAPlatform = function(object) {
-    var colliding = false;
+    var platform,
+        colliding = false;
 
     for(var i = 0; i < Platform.platforms.length; i++) {
-        var platform = Platform.platforms[i];
+        platform = Platform.platforms[i];
         platform.draw(game.ctx);
 
         if(collisionManager.AABB(object, platform)) {
@@ -52,25 +58,3 @@ Platform.isObjectCollidingWithAPlatform = function(object) {
 
     return colliding;
 };
-
-//Debug platforms
-new Platform({
-    x: 40,
-    y: 60,
-    width: 300,
-    height: 20
-});
-
-new Platform({
-    x: 60,
-    y: 300,
-    width: 100,
-    height: 20
-});
-
-new Platform({
-    x: 500,
-    y: 250,
-    width: 300,
-    height: 20
-});

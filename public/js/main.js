@@ -9,7 +9,8 @@ var CONSTANTS = {}, //Sent by server
             window.oRequestAnimationFrame ||
             window.msRequestAnimationFrame,
         animation_fps: 60,
-        initialized: false
+        initialized: false,
+        PADDING: 40
     },
     yourself = {};
 
@@ -26,13 +27,14 @@ game.init = function() {
     //requestAnimationFrame will break if it is called in a context other than window, so it needs to be bound to the window object
     if(game.requestAnimationFrame) {
         game.requestAnimationFrame = game.requestAnimationFrame.bind(window);
-    }   
+    }
 
+    //TODO: Don't hardcode this
+    decodeAndGenerate("1.0.0/Test map/Hydrothermal/1 14|1;0 12;1|1;0 12;1|1 4;0 6;1 4|1;0 12;1|1;0 12;1|1;0 12;1|1;0 3;1 6;0 3;1|1;0 12;1|1;0 12;1|1 14");
     game.mainLoop();
 };
 
 game.mainLoop = function() {
-
     game.ctx.clearRect(0, 0, game.width, game.height);
 
     var move = 0;
