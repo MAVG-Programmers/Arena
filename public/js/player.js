@@ -35,6 +35,9 @@ Player.drawPlayers = function() {
 Player.width = 32;
 Player.height = 32;
 Player.sprite = new Sprite({
+    animated: true,
+    sheetwidth: 384,
+    speed: 0.25,
     width: Player.width,
     height: Player.height,
     path: "img/player.png"
