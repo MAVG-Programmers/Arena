@@ -14,8 +14,8 @@ var crypto = require("crypto"),
 function Player() {
     var id;
 
-    this.x = Math.random() * 500;
-    this.y = Math.random() * 500;
+    this.x = 250;
+    this.y = 200;
     this.inAir = true;
     this.speed = {
         x: 0,
