@@ -21,6 +21,8 @@ Bullet.prototype.fire = function(from, to) {
 
     this.x = from.x;
     this.y = from.y;
+	this.height = Bullet.height;
+	this.width = Bullet.width;
     
     this.direction = {
         x: Math.cos(angle),
@@ -30,6 +32,8 @@ Bullet.prototype.fire = function(from, to) {
     Bullet.bullets.push(this);
 };
 
+Bullet.width = 2;
+Bullet.height = 2;
 Bullet.prototype.update = function() {
     this.x += this.direction.x * CONSTANTS.BULLET.SPEED;
     this.y += this.direction.y * CONSTANTS.BULLET.SPEED;

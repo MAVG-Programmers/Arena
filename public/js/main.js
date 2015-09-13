@@ -95,6 +95,37 @@ game.mainLoop = function() {
         Player.players[yourself.id].inAir = true;
         socket.emit('in air')
     }
+	
+	//evaluate bullet collisions
+	for(i = 0; i < Bullet.bullets.length; i++) {
+		// Temporary bullet object with applied x movement
+		var temp_x = {
+			x: Bullet.bullets[i].x,
+			y: Bullet.bullets[i].y,
+			width: Bullet.bullets[i].width,
+			height: Bullet.bullets[i].height,
+		};
+
+		// Temporary bullet object with applied y movement
+		var temp_y = {
+			x: Bullet.bullets[i].x,
+			y: Bullet.bullets[i].y,
+			width: Bullet.bullets[i].width,
+			height: Bullet.bullets[i].height,
+		};
+	
+		//bullet colliding with platform in the x direction or is outside of the map
+		if(Platform.isObjectCollidingWithAPlatform(temp_x) || !collisionManager.isInsideBounds(temp_x).x) {
+			//remove bullet
+			Bullet.bullets.splice(i,1);
+		}
+	
+		//bullet colliding with platform in the x direction or is outside of the map
+		if(Platform.isObjectCollidingWithAPlatform(temp_y) || !collisionManager.isInsideBounds(temp_y).y) {
+			//remove bullet
+			Bullet.bullets.splice(i,1);
+		}
+	}
 
     // If the player is on the ground and pressing the jump button
     if(!Player.players[yourself.id].inAir && heldkeys[KEYS.SPACE]) {

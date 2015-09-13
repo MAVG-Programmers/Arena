@@ -1,5 +1,6 @@
 var crypto = require("crypto"),
     players = [];
+    bullets = [];
     CONSTANTS = {
         PLAYER: {
             SPEED: 5,
@@ -62,6 +63,56 @@ Player.prototype.update = function() {
         this.speed.y += CONSTANTS.GRAVITY;
         this.y += this.speed.y;
     }
+
+    io.transmitPosition(this);
+};
+
+function Bullet() {
+    var id;
+
+    this.x = 250;
+    this.y = 200;
+    this.inAir = true;
+    this.speed = {
+        x: 0,
+        y: 0
+    };
+
+    //Each bullet is assigned a 32-character (hex is 2 characters per bit) random ID - like players
+    //If there's a collision (effectively impossible, but still technically possible), the ID is regenerated until unique
+    id = crypto.randomBytes(16).toString("hex");
+
+    for(var i = 0; Bullet.find("id", id); i++) {
+        id = crypto.randomBytes(16).toString("hex");
+    }
+
+    this.id = id;
+    this.index = bullets.length;
+
+    bullets.push(this);
+}
+
+//This is a simple search function that can be used to iterate through all the bullets and check a given key for a given value
+Bullet.find = function(key, val) {
+    for(var bullet in bullets) {
+        if(bullets[bullet][key] === val) {
+            return bullets[bullet];
+        }
+    }
+    return false;
+};
+
+Bullet.updateBullets = function() {
+    for (var i = 0; i < bullets.length; i++)
+    {
+        bullets[i].update();
+		console.log(bullets.length);
+    }
+}
+
+Bullet.prototype.update = function() {
+	this.x += this.speed.x * CONSTANTS.BULLET.SPEED;
+	this.y += this.speed.y * CONSTANTS.BULLET.SPEED;
 
     io.transmitPosition(this);
 };
@@ -134,6 +185,7 @@ function initialize(io_obj) {
 setInterval(function()
 {
     Player.updatePlayers();
+    Bullet.updateBullets();
 }, 20)
 
 module.exports = initialize;
