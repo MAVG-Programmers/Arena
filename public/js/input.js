@@ -90,6 +90,8 @@ addEventListener("mousemove", function(e) {
 }, false);
 
 addEventListener("mousedown", function() {
-	//tell server to create a new bullet
-	socket.emit("createBulletServer");
+	//tell server to create a new bullet if your cooldown has reached 0
+	if(Player.players[yourself.id].curCoolDown == 0) {
+		socket.emit("createBulletServer");
+	}
 }, false);

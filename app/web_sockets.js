@@ -5,6 +5,7 @@ var crypto = require("crypto"),
         PLAYER: {
             SPEED: 5,
             JUMP: -10,
+            COOLDOWN: 30,
         },
         BULLET: {
             SPEED: 15,
@@ -18,10 +19,11 @@ function Player() {
     this.x = 250;
     this.y = 200;
     this.inAir = true;
+	this.curCoolDown = 0;
     this.speed = {
         x: 0,
         y: 0
-    };
+    },
 
     //Each player is assigned a 32-character (hex is 2 characters per bit) random ID
     //If there's a collision (effectively impossible, but still technically possible), the ID is regenerated until unique

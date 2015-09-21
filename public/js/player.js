@@ -9,6 +9,7 @@ function Player() {
 
         this.width = Player.width;
         this.height = Player.height;
+		this.curCoolDown = 0;
 
         Player.players[player.id] = this;
     };
@@ -16,6 +17,9 @@ function Player() {
     this.update = function (player) {
         this.x = player.x;
         this.y = player.y;
+		if(this.curCoolDown > 0) {
+			this.curCoolDown -= 1;
+		}
     };
 
     this.draw = function (ctx) {

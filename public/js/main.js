@@ -38,8 +38,9 @@ game.init = function() {
 
 function initClientListeners() {
 	socket.on("createBulletClient", function(bullet) {
-	//create a new client-bullet object with the ID created on the server
+		//create a new client-bullet object with the ID created on the server, reset cooldown counter to constant cooldown value
 		var bullet = new Bullet(bullet.id);
+		Player.players[yourself.id].curCoolDown = CONSTANTS.PLAYER.COOLDOWN;
 	});
 }
 
