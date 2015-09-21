@@ -28,11 +28,20 @@ game.init = function() {
     if(game.requestAnimationFrame) {
         game.requestAnimationFrame = game.requestAnimationFrame.bind(window);
     }
+	
+	initClientListeners();
 
     //TODO: Don't hardcode this
     decodeAndGenerate("1.0.0/Test map/Hydrothermal/1 14|1;0 12;1|1;0 12;1|1 4;0 6;1 4|1;0 12;1|1;0 12;1|1;0 12;1|1;0 3;1 6;0 3;1|1;0 12;1|1;0 12;1|1 14");
     game.mainLoop();
 };
+
+function initClientListeners() {
+	socket.on("createBulletClient", function(bullet) {
+	//create a new client-bullet object with the ID created on the server
+		var bullet = new Bullet(bullet.id);
+	});
+}
 
 game.mainLoop = function() {
     game.ctx.clearRect(0, 0, game.width, game.height);
@@ -117,12 +126,18 @@ game.mainLoop = function() {
 		//bullet colliding with platform in the x direction or is outside of the map
 		if(Platform.isObjectCollidingWithAPlatform(temp_x) || !collisionManager.isInsideBounds(temp_x).x) {
 			//remove bullet
+			if(typeof(Bullet.bullets[i]) != 'undefined') {
+				socket.emit("destroyBulletServer", {id:Bullet.bullets[i].id});
+			}
 			Bullet.bullets.splice(i,1);
 		}
 	
 		//bullet colliding with platform in the x direction or is outside of the map
 		if(Platform.isObjectCollidingWithAPlatform(temp_y) || !collisionManager.isInsideBounds(temp_y).y) {
 			//remove bullet
+			if(typeof(Bullet.bullets[i]) != 'undefined') {
+				socket.emit("destroyBulletServer", {id:Bullet.bullets[i].id});
+			}
 			Bullet.bullets.splice(i,1);
 		}
 	}

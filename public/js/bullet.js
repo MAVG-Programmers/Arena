@@ -1,16 +1,8 @@
 console.log("Bullets initialized.");
 
-//Bullet debugging
-
-addEventListener("mousedown", function() {
-    var bullet = new Bullet();
-    bullet.fire(Player.players[yourself.id], mouse);
-}, false);
-
-//---
-
-function Bullet() {
-    
+function Bullet(id) {
+	this.id = id;
+    this.fire(Player.players[yourself.id], mouse);
 }
 
 Bullet.bullets = [];

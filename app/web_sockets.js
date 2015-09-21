@@ -102,11 +102,18 @@ Bullet.find = function(key, val) {
     return false;
 };
 
+Bullet.removeBullet = function(key, val) {
+    for(var bullet in bullets) {
+        if(bullets[bullet][key] === val) {
+            bullets.splice(bullet, 1);
+        }
+    }
+};
+
 Bullet.updateBullets = function() {
     for (var i = 0; i < bullets.length; i++)
     {
         bullets[i].update();
-		console.log(bullets.length);
     }
 }
 
@@ -114,7 +121,6 @@ Bullet.prototype.update = function() {
 	this.x += this.speed.x * CONSTANTS.BULLET.SPEED;
 	this.y += this.speed.y * CONSTANTS.BULLET.SPEED;
 
-    io.transmitPosition(this);
 };
 
 function initialize(io_obj) {
@@ -172,6 +178,17 @@ function initialize(io_obj) {
                 delete socket.player;
             }
         });
+
+        socket.on("createBulletServer", function() {
+			//create a new bullet, pass the bullet ID back to the client
+            var bullet = new Bullet();
+			socket.emit("createBulletClient", {id:bullet.id});
+        });
+		
+		socket.on("destroyBulletServer", function(bullet) {
+			//remove bullet from server's list of bullets
+			Bullet.removeBullet("id",bullet.id);
+		});
     });
 
     io.transmitPosition = function(player)

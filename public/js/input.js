@@ -88,3 +88,8 @@ function getMousePos(canvas, e) {
 addEventListener("mousemove", function(e) {
     mouse = getMousePos(game.canvas, e);
 }, false);
+
+addEventListener("mousedown", function() {
+	//tell server to create a new bullet
+	socket.emit("createBulletServer");
+}, false);
